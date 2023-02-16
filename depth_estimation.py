@@ -15,13 +15,14 @@ def load_model(low_cpu_mem_usage=True):
     return model,feature_extractor
 
 def generate_image(model,feature_extractor,image_name:str,
-                    output_folder:str,show_image=True):
-    if not os.path.isdir(output_folder):
-        os.makedirs(output_folder)
-
-    image_basename = os.path.basename(image_name).split('.')[0]
-    depth_output_imagepath = os.path.join(output_folder,f"{image_basename}_depth.jpg")
-    contacted_depth_output_imagepath = os.path.join(output_folder,f"{image_basename}_concate.jpg")
+                    output_folder:str,show_image=True,save=False):
+    
+    if save:
+        if not os.path.isdir(output_folder):
+            os.makedirs(output_folder)
+        image_basename = os.path.basename(image_name).split('.')[0]
+        depth_output_imagepath = os.path.join(output_folder,f"{image_basename}_depth.jpg")
+        contacted_depth_output_imagepath = os.path.join(output_folder,f"{image_basename}_concate.jpg")
 
     image = Image.open(image_name)
     image_org  =cv2.imread(image_name)
@@ -41,8 +42,7 @@ def generate_image(model,feature_extractor,image_name:str,
         mode="bicubic",
         align_corners=False,
     )
-    print("Total TIME")
-    print(time.time()-start_time)
+    print(f"<====> Total Time Taken : {time.time()-start_time} Second <====>")
     
     # visualize the prediction
     output = prediction.squeeze().cpu().numpy()
@@ -52,9 +52,9 @@ def generate_image(model,feature_extractor,image_name:str,
     depth = np.asarray(depth)
     grey_image = cv2.cvtColor(image_org,cv2.COLOR_BGR2GRAY)
     out_image = cv2.hconcat([grey_image, depth])
-
-    cv2.imwrite(depth_output_imagepath,depth)
-    cv2.imwrite(contacted_depth_output_imagepath,out_image)
+    if save:
+        cv2.imwrite(depth_output_imagepath,depth)
+        cv2.imwrite(contacted_depth_output_imagepath,out_image)
 
     if show_image:
         out_image = cv2.resize(out_image,(1280,720))
@@ -66,9 +66,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-input', help='Enter Single Image Path', type=str,required=True)
     parser.add_argument('-output', help='Enter Output Folder name', type=str,default='output')
-    parser.add_argument('-show_image',help="Show output image",type=bool,default=True)
+    parser.add_argument('-show_image',help="Show output image",type=bool,default=False)
+    parser.add_argument('-save',help="If user want to save the image or not",type=bool,default=False)
 
     args = parser.parse_args()
 
     model,feature_extractor = load_model()
-    generate_image(model,feature_extractor,args.input,args.output,args.show_image)
+
+
+    generate_image(model,feature_extractor,args.input,args.output,args.show_image,args.save)
