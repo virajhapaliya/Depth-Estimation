@@ -1,6 +1,16 @@
 # Depth-Estimation
 
-On give image it will generate depth image.
+For the depth estimation I have used the Intel's Hybrid and Large models. Check the output give below.
+
+# How to run
+
+> pip install -r requiremens.txt
+
+- for hybrid model
+
+```
+python depth_estimation.py -input Input\test3.jpg -save True -model large
+```
 
 # Output Samples
 
