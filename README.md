@@ -4,12 +4,30 @@ For the depth estimation I have used the Intel's Hybrid and Large models. Check 
 
 # How to run
 
-> pip install -r requiremens.txt
+```
+pip install -r requiremens.txt
+```
 
-- for hybrid model
+- For Hybrid Model
+
+```
+python depth_estimation.py -input Input\test3.jpg -save True
+```
+
+- For Large Model
 
 ```
 python depth_estimation.py -input Input\test3.jpg -save True -model large
+```
+
+- Params
+
+```
+-input : Single image path
+-save :  To save the images in folder
+-output : To save the images in given folder
+-show_image :  Will show the generate output image directly
+-model : Depth model type
 ```
 
 # Output Samples
